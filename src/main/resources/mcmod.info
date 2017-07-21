@@ -1,0 +1,16 @@
+[
+{
+  "modid": "tothebatpoles",
+  "name": "To the Bat Poles!",
+  "description": "A mod for sliding down the poles.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "https://github.com/Seth0067/tothebatpoles",
+  "updateUrl": "https://minecraft.curseforge.com/projects/to-the-bat-poles/files",
+  "authorList": ["Seth0067, EnderLanky"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
