@@ -12,7 +12,7 @@ public class Player {
 	public static void onPlayerTick(PlayerTickEvent event) {
 		if (event.side.isServer())
 			return;
-		Pole.fallSpeedReduction = 15;
+//		Pole.fallSpeedReduction = 15; // that's for testing
 		EntityPlayer player = event.player;
 		if (Pole.isHoldedBy(player)) {
 			double motionOld = player.motionY;
