@@ -17,8 +17,8 @@ public class Player {
 		if (event.side.isServer()) {
 			BlockPos pos = Pole.findReachableBlockPos(player);
 			Holder holder = Pole.findHolderFor(player);
-			if (pos != null && holder == null && Pole.canBeHeldBy(player) && Pole.isLongEnoughFor(player, pos)
-					&& Pole.hasBlocksBelow(world, pos, 2) && world.getWorldTime() % 5 == 0) {
+			if (pos != null && holder == null && world.getWorldTime() % 5 == 0 && Pole.canBeHeldBy(player)
+					&& Pole.isLongEnoughFor(player, pos) && Pole.hasBlocksBelow(world, pos, 2)) {
 				holder = new Holder(world, player, pos);
 				world.spawnEntity(holder);
 			}
