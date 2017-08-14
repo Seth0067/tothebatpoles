@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-@Mod(modid = Main.ID, name = Main.NAME, version = "0.1.0.0")
+@Mod(modid = Main.ID, name = Main.NAME, version = "1.0.0.0")
 public class Main {
 
 	public static final String ID = "tothebatpoles";
