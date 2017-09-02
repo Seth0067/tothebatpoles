@@ -140,10 +140,10 @@ public class Holder extends Entity {
 		Vec3d destPos = poleCenter.add(radiusVec.scale(spinRadius)).add(spinVec).addVector(0, -slideVelocity, 0);
 
 		// update rotations
-		float yaw = 180 - (float) (MathHelper.atan2(radiusVec.x, radiusVec.z) * (180 / Math.PI));
+		float yaw = 180 - (float) (MathHelper.atan2(radiusVec.xCoord, radiusVec.zCoord) * (180 / Math.PI));
 		deltaRotation = MathHelper.wrapDegrees(yaw - rotationYaw);
 
-		setPositionAndRotation(destPos.x, destPos.y, destPos.z, yaw, rotationPitch);
+		setPositionAndRotation(destPos.xCoord, destPos.yCoord, destPos.zCoord, yaw, rotationPitch);
 	}
 
 	@Override

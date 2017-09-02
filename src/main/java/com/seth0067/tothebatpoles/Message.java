@@ -36,7 +36,7 @@ public class Message implements IMessage {
 
 		@Override
 		public IMessage onMessage(Message message, MessageContext ctx) {
-			WorldServer world = ctx.getServerHandler().player.getServerWorld();
+			WorldServer world = ctx.getServerHandler().playerEntity.getServerWorld();
 			Entity entity = world.getEntityByID(message.holderId);
 			if (entity instanceof Holder) {
 				Holder holder = (Holder) entity;
