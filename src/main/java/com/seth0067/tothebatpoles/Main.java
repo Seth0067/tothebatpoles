@@ -15,10 +15,10 @@ import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-@Mod(modid = Main.ID, name = Main.NAME, version = "1.0.0.0")
+@Mod(modid = Main.ID, name = Main.NAME, version = "%VERSION%")
 public class Main {
 
-	public static final String ID = "tothebatpoles";
+	public static final String ID = "%ID%";
 	public static final String NAME = "To the Bat Poles!";
 	public static final SimpleNetworkWrapper NETWORK = NetworkRegistry.INSTANCE.newSimpleChannel(ID);
 
