@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-@Mod(modid = Main.ID, name = Main.NAME, version = "1.0.0.0")
+@Mod(modid = Main.ID, name = Main.NAME, version = "1.0.1.0")
 public class Main {
 
 	public static final String ID = "tothebatpoles";
@@ -53,7 +53,10 @@ public class Main {
 	@EventHandler
 	@SideOnly(Side.CLIENT)
 	public void initClient(FMLInitializationEvent event) {
-
+		String category = "Client";
+		Holder.switchToThirdPersonView = config.getBoolean("switchToThirdPersonView", category, Holder.switchToThirdPersonView, 
+				"Enables automatic switching to a third-person view while holding the pole.");
+		config.save();
 	}
 
 	@EventHandler
