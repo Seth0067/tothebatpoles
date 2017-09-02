@@ -1,3 +1,6 @@
 /bin/
+/Build.bat
 /.classpath
 /.project
+/RELEASE/
+/.gradle/
