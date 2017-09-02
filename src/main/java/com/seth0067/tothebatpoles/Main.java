@@ -1,5 +1,6 @@
 package com.seth0067.tothebatpoles;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -14,10 +15,10 @@ import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-@Mod(modid = Main.ID, name = Main.NAME, version = "1.0.0.0")
+@Mod(modid = Main.ID, name = Main.NAME, version = "%VERSION%")
 public class Main {
 
-	public static final String ID = "tothebatpoles";
+	public static final String ID = "%ID%";
 	public static final String NAME = "To the Bat Poles!";
 	public static final SimpleNetworkWrapper NETWORK = NetworkRegistry.INSTANCE.newSimpleChannel(ID);
 
@@ -51,7 +52,10 @@ public class Main {
 	@EventHandler
 	@SideOnly(Side.CLIENT)
 	public void initClient(FMLInitializationEvent event) {
-
+		String category = "Client";
+		Holder.switchToThirdPersonView = config.getBoolean("switchToThirdPersonView", category, Holder.switchToThirdPersonView, 
+				"Enables automatic switching to a third-person view while holding the pole.");
+		config.save();
 	}
 
 	@EventHandler
