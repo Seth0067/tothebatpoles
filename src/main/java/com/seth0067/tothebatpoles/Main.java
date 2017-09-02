@@ -1,6 +1,5 @@
 package com.seth0067.tothebatpoles;
 
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -40,8 +39,7 @@ public class Main {
 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
-		EntityRegistry.registerModEntity(new ResourceLocation(ID, Holder.NAME), Holder.class, Holder.NAME, 0, this, 255,
-				20, true);
+		EntityRegistry.registerModEntity(Holder.class, Holder.NAME, 0, this, 255, 20, true);
 		String category = "Velocity";
 		Holder.slideVelocity = config.getFloat("slideVelocity", category, Holder.slideVelocity, 0f, 0.8f,
 				"Defines the sliding speed down the pole.");
