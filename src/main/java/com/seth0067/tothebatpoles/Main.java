@@ -40,8 +40,7 @@ public class Main {
 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
-		EntityRegistry.registerModEntity(new ResourceLocation(ID, Holder.NAME), Holder.class, Holder.NAME, 0, this, 255,
-				20, true);
+		EntityRegistry.registerModEntity(Holder.class, Holder.NAME, 0, this, 255, 20, true);
 		String category = "Velocity";
 		Holder.slideVelocity = config.getFloat("slideVelocity", category, Holder.slideVelocity, 0f, 0.8f,
 				"Defines the sliding speed down the pole.");

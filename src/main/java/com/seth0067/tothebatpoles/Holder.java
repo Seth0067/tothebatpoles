@@ -158,7 +158,7 @@ public class Holder extends Entity {
 	public void applyOrientationToEntity(Entity entity) {
 		entity.setRenderYawOffset(rotationYaw);
 		float delta = MathHelper.wrapDegrees(entity.rotationYaw - rotationYaw);
-		float clamped = MathHelper.clamp(delta, -MAX_DELTA_YAW, MAX_DELTA_YAW);
+		float clamped = MathHelper.clamp_float(delta, -MAX_DELTA_YAW, MAX_DELTA_YAW);
 		entity.rotationYaw += clamped - delta;
 	}
 
