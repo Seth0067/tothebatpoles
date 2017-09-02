@@ -53,7 +53,10 @@ public class Main {
 	@EventHandler
 	@SideOnly(Side.CLIENT)
 	public void initClient(FMLInitializationEvent event) {
-
+		String category = "Client";
+		Holder.switchToThirdPersonView = config.getBoolean("switchToThirdPersonView", category, Holder.switchToThirdPersonView, 
+				"Enables automatic switching to a third-person view while holding the pole.");
+		config.save();
 	}
 
 	@EventHandler
