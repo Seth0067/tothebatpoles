@@ -7,8 +7,10 @@ import javax.annotation.Nullable;
 
 import com.google.common.base.Optional;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -25,6 +27,7 @@ import net.minecraftforge.fml.client.registry.IRenderFactory;
 
 public class Holder extends Entity {
 
+	public static boolean switchToThirdPersonView = true;
 	public static float maxSpinVelocity = 0.1f;
 	public static float slideVelocity = 0.4f;
 
@@ -43,6 +46,7 @@ public class Holder extends Entity {
 			DataSerializers.FLOAT);
 
 	private float deltaRotation;
+	private int savedThirdPersonView;
 
 	public Holder(World world) {
 		super(world);
@@ -220,6 +224,24 @@ public class Holder extends Entity {
 
 	public void setPolePos(@Nullable BlockPos pos) {
 		dataManager.set(POLE_POS, Optional.fromNullable(pos));
+	}
+
+	@Override
+	protected void addPassenger(Entity passenger) {
+		if (isClientSide() && switchToThirdPersonView && passenger instanceof EntityPlayer) {
+			GameSettings settings = Minecraft.getMinecraft().gameSettings;
+			savedThirdPersonView = settings.thirdPersonView;
+			if (settings.thirdPersonView == 0)
+				settings.thirdPersonView = 1;
+		}
+		super.addPassenger(passenger);
+	}
+
+	@Override
+	protected void removePassenger(Entity passenger) {
+		if (isClientSide() && switchToThirdPersonView && passenger instanceof EntityPlayer)
+			Minecraft.getMinecraft().gameSettings.thirdPersonView = savedThirdPersonView;
+		super.removePassenger(passenger);
 	}
 
 	public static class Renderer extends Render<Holder> {
