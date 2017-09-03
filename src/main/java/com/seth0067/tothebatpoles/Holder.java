@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 import com.google.common.base.Optional;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.settings.GameSettings;
@@ -17,6 +18,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.MovementInput;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -27,9 +29,11 @@ import net.minecraftforge.fml.client.registry.IRenderFactory;
 
 public class Holder extends Entity {
 
+	public static boolean allowClimbing = false;
 	public static boolean switchToThirdPersonView = true;
+	public static float slideAcceleration = 0.04f;
 	public static float maxSpinVelocity = 0.1f;
-	public static float slideVelocity = 0.4f;
+	public static float maxSlideVelocity = 0.4f;
 
 	public static final String NAME = Holder.class.getSimpleName().toLowerCase(Locale.ROOT);
 
@@ -42,7 +46,7 @@ public class Holder extends Entity {
 			DataSerializers.FLOAT);
 	private static final DataParameter<Float> SPIN_VELOCITY = EntityDataManager.createKey(Holder.class,
 			DataSerializers.FLOAT);
-	private static final DataParameter<Float> SLIDE_VELOCITY = EntityDataManager.createKey(Holder.class,
+	private static final DataParameter<Float> SLIDE_ACCELERATION = EntityDataManager.createKey(Holder.class,
 			DataSerializers.FLOAT);
 
 	private float deltaRotation;
@@ -52,7 +56,7 @@ public class Holder extends Entity {
 		super(world);
 		this.setSize(0.5F, 0.5F);
 		dataManager.register(POLE_POS, Optional.absent());
-		dataManager.register(SLIDE_VELOCITY, 0f);
+		dataManager.register(SLIDE_ACCELERATION, 0f);
 		dataManager.register(SPIN_RADIUS, 0f);
 		dataManager.register(SPIN_VELOCITY, 0f);
 	}
@@ -62,15 +66,22 @@ public class Holder extends Entity {
 		copyLocationAndAnglesFrom(player);
 		player.startRiding(this, false);
 		setPolePos(polePos);
-		setSlideVelocity(slideVelocity);
 		setSpinRadius(player.width * 0.8f);
 	}
 
-	public static float calcSpinVelocityFor(float deltaYaw) {
+	public void updateSpinVelocity(float deltaYaw) {
 		float yawFactor = deltaYaw / MAX_DELTA_YAW;
 		//		maxSpinVelocity = 0.1f; // for testing
 		float spinVelocity = maxSpinVelocity * yawFactor;
-		return spinVelocity;
+		setSpinVelocity(spinVelocity);
+	}
+
+	public void updateSlideAcceleration(boolean decelerate) {
+		//		allowClimbing = true; // for testing
+		float targetVelocity = decelerate ? (allowClimbing ? maxSlideVelocity / 2f : 0) : -maxSlideVelocity;
+		float acceleration = MathHelper.clamp((float) (targetVelocity - motionY), -slideAcceleration,
+				slideAcceleration);
+		setSlideAcceleration(acceleration);
 	}
 
 	@Override
@@ -121,10 +132,17 @@ public class Holder extends Entity {
 		}
 
 		if (isClientSide()) {
+			boolean decelerate = false;
+			if (passenger instanceof EntityPlayerSP) {
+				MovementInput input = ((EntityPlayerSP) passenger).movementInput;
+				if (input.jump)
+					decelerate = true;
+			}
+
 			float headYaw = passenger.getRotationYawHead();
 			float holderYaw = rotationYaw;
 			float deltaYaw = MathHelper.wrapDegrees(headYaw - holderYaw);
-			Message message = new Message(this, deltaYaw);
+			Message message = new Message(this, decelerate, deltaYaw);
 			Main.NETWORK.sendToServer(message);
 		}
 
@@ -135,9 +153,11 @@ public class Holder extends Entity {
 		//		spinVelocity = 0.05f; // for testing
 		Vec3d spinVec = radiusVec.crossProduct(UP_UNIT_VECTOR).scale(spinVelocity);
 		float spinRadius = getSpinRadius();
-		float slideVelocity = getSlideVelocity();
-		//				slideVelocity = 0.0f; // for testing
-		Vec3d destPos = poleCenter.add(radiusVec.scale(spinRadius)).add(spinVec).addVector(0, -slideVelocity, 0);
+		float slideAcceleration = getSlideAcceleration();
+		//		slideAcceleration = 0.0f; // for testing
+
+		motionY += slideAcceleration;
+		Vec3d destPos = poleCenter.add(radiusVec.scale(spinRadius)).add(spinVec).addVector(0, motionY, 0);
 
 		// update rotations
 		float yaw = 180 - (float) (MathHelper.atan2(radiusVec.x, radiusVec.z) * (180 / Math.PI));
@@ -209,12 +229,12 @@ public class Holder extends Entity {
 		dataManager.set(SPIN_VELOCITY, spinVelocity);
 	}
 
-	public float getSlideVelocity() {
-		return dataManager.get(SLIDE_VELOCITY).floatValue();
+	public float getSlideAcceleration() {
+		return dataManager.get(SLIDE_ACCELERATION).floatValue();
 	}
 
-	public void setSlideVelocity(float slideVelocity) {
-		dataManager.set(SLIDE_VELOCITY, slideVelocity);
+	public void setSlideAcceleration(float slideAcceleration) {
+		dataManager.set(SLIDE_ACCELERATION, slideAcceleration);
 	}
 
 	@Nullable
