@@ -160,10 +160,10 @@ public class Holder extends Entity {
 		Vec3d destPos = poleCenter.add(radiusVec.scale(spinRadius)).add(spinVec).addVector(0, motionY, 0);
 
 		// update rotations
-		float yaw = 180 - (float) (MathHelper.atan2(radiusVec.x, radiusVec.z) * (180 / Math.PI));
+		float yaw = 180 - (float) (MathHelper.atan2(radiusVec.xCoord, radiusVec.zCoord) * (180 / Math.PI));
 		deltaRotation = MathHelper.wrapDegrees(yaw - rotationYaw);
 
-		setPositionAndRotation(destPos.x, destPos.y, destPos.z, yaw, rotationPitch);
+		setPositionAndRotation(destPos.xCoord, destPos.yCoord, destPos.zCoord, yaw, rotationPitch);
 	}
 
 	@Override
@@ -178,7 +178,7 @@ public class Holder extends Entity {
 	public void applyOrientationToEntity(Entity entity) {
 		entity.setRenderYawOffset(rotationYaw);
 		float delta = MathHelper.wrapDegrees(entity.rotationYaw - rotationYaw);
-		float clamped = MathHelper.clamp(delta, -MAX_DELTA_YAW, MAX_DELTA_YAW);
+		float clamped = MathHelper.clamp_float(delta, -MAX_DELTA_YAW, MAX_DELTA_YAW);
 		entity.rotationYaw += clamped - delta;
 	}
 
