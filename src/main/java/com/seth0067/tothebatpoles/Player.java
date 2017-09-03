@@ -20,7 +20,7 @@ public class Player {
 			if (pos != null && holder == null && world.getWorldTime() % 5 == 0 && Pole.canBeHeldBy(player)
 					&& Pole.isLongEnoughFor(player, pos) && Pole.hasBlocksBelow(world, pos, 1)) {
 				holder = new Holder(world, player, pos);
-				world.spawnEntity(holder);
+				world.spawnEntityInWorld(holder);
 			}
 		}
 	}

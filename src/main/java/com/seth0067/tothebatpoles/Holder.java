@@ -79,7 +79,7 @@ public class Holder extends Entity {
 	public void updateSlideAcceleration(boolean decelerate) {
 		//		allowClimbing = true; // for testing
 		float targetVelocity = decelerate ? (allowClimbing ? maxSlideVelocity / 2f : 0) : -maxSlideVelocity;
-		float acceleration = MathHelper.clamp((float) (targetVelocity - motionY), -slideAcceleration,
+		float acceleration = MathHelper.clamp_float((float) (targetVelocity - motionY), -slideAcceleration,
 				slideAcceleration);
 		setSlideAcceleration(acceleration);
 	}
