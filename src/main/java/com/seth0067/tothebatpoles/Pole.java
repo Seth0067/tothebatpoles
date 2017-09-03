@@ -37,9 +37,9 @@ public class Pole {
 		World world = player.getEntityWorld();
 		AxisAlignedBB bb = player.getEntityBoundingBox();
 		MutableBlockPos pos = new MutableBlockPos();
-		for (int y = MathHelper.floor_double(bb.minY); y <= bb.maxY; y++)
-			for (int x = MathHelper.floor_double(bb.minX); x <= bb.maxX; x++)
-				for (int z = MathHelper.floor_double(bb.minZ); z <= bb.maxZ; z++) {
+		for (int y = MathHelper.floor(bb.minY); y <= bb.maxY; y++)
+			for (int x = MathHelper.floor(bb.minX); x <= bb.maxX; x++)
+				for (int z = MathHelper.floor(bb.minZ); z <= bb.maxZ; z++) {
 					pos.setPos(x, y, z);
 					if (isPoleBlock(world, pos))
 						return pos.toImmutable();
@@ -126,7 +126,7 @@ public class Pole {
 
 	public static boolean isLongEnoughFor(EntityPlayer player, BlockPos pos) {
 		World world = player.getEntityWorld();
-		int amount = MathHelper.floor_float(player.height);
+		int amount = MathHelper.floor(player.height);
 		return hasBlocksAbove(world, pos, amount);
 	}
 }
