@@ -10,25 +10,29 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class Message implements IMessage {
 
 	private int holderId;
+	private boolean decelerate;
 	private float deltaYaw;
 
 	public Message() {
 	}
 
-	public Message(Holder holder, float deltaYaw) {
+	public Message(Holder holder, boolean decelerate, float deltaYaw) {
 		this.holderId = holder.getEntityId();
+		this.decelerate = decelerate;
 		this.deltaYaw = deltaYaw;
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		holderId = buf.readInt();
+		decelerate = buf.readBoolean();
 		deltaYaw = buf.readFloat();
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
 		buf.writeInt(holderId);
+		buf.writeBoolean(decelerate);
 		buf.writeFloat(deltaYaw);
 	}
 
@@ -40,9 +44,9 @@ public class Message implements IMessage {
 			Entity entity = world.getEntityByID(message.holderId);
 			if (entity instanceof Holder) {
 				Holder holder = (Holder) entity;
-				float spinVelocity = Holder.calcSpinVelocityFor(message.deltaYaw);
 				world.addScheduledTask(() -> {
-					holder.setSpinVelocity(spinVelocity);
+					holder.updateSlideAcceleration(message.decelerate);
+					holder.updateSpinVelocity(message.deltaYaw);
 				});
 			}
 			return null;
