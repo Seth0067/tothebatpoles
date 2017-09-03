@@ -1,5 +1,6 @@
 package com.seth0067.tothebatpoles;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -39,10 +40,13 @@ public class Main {
 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
-		EntityRegistry.registerModEntity(Holder.class, Holder.NAME, 0, this, 255, 20, true);
-		String category = "Velocity";
-		Holder.slideVelocity = config.getFloat("slideVelocity", category, Holder.slideVelocity, 0f, 0.8f,
-				"Defines the sliding speed down the pole.");
+		EntityRegistry.registerModEntity(new ResourceLocation(ID, Holder.NAME), Holder.class, Holder.NAME, 0, this, 255,
+				20, true);
+		String category = "Server";
+		Holder.allowClimbing = config.getBoolean("allowClimbing", category, Holder.allowClimbing, 
+				"Enables the ability to climb the pole.");
+		Holder.maxSlideVelocity = config.getFloat("maxSlideVelocity", category, Holder.maxSlideVelocity, 0f, 0.8f,
+				"Defines the maximum sliding speed down the pole.");
 		Holder.maxSpinVelocity = config.getFloat("maxSpinVelocity", category, Holder.maxSpinVelocity, 0f, 0.2f,
 				"Defines the maximum rotation speed around the pole.");
 		config.save();
