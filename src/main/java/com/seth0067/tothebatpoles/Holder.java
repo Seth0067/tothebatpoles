@@ -26,6 +26,8 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class Holder extends Entity {
 
@@ -69,14 +71,16 @@ public class Holder extends Entity {
 		setSpinRadius(player.width * 0.8f);
 	}
 
-	public void updateSpinVelocity(float deltaYaw) {
+	public void updateSpinVelocity(float deltaYaw)
+	{
 		float yawFactor = deltaYaw / MAX_DELTA_YAW;
 		//		maxSpinVelocity = 0.1f; // for testing
 		float spinVelocity = maxSpinVelocity * yawFactor;
 		setSpinVelocity(spinVelocity);
 	}
 
-	public void updateSlideAcceleration(boolean decelerate) {
+	public void updateSlideAcceleration(boolean decelerate)
+	{
 		//		allowClimbing = true; // for testing
 		float targetVelocity = decelerate ? (allowClimbing ? maxSlideVelocity / 2f : 0) : -maxSlideVelocity;
 		float acceleration = MathHelper.clamp((float) (targetVelocity - motionY), -slideAcceleration,
@@ -85,32 +89,44 @@ public class Holder extends Entity {
 	}
 
 	@Override
-	public AxisAlignedBB getEntityBoundingBox() {
+	public AxisAlignedBB getEntityBoundingBox()
+	{
 		return super.getEntityBoundingBox();
 	}
 
 	@Override
-	public double getMountedYOffset() {
+	public double getMountedYOffset()
+	{
 		return 0;
 	}
 
 	@Override
 	@Nullable
-	public Entity getControllingPassenger() {
+	public Entity getControllingPassenger()
+	{
 		List<Entity> passengers = getPassengers();
 		return passengers.isEmpty() ? null : passengers.get(0);
 	}
 
-	public boolean isServerSide() {
+	public boolean isServerSide()
+	{
 		return !isClientSide();
 	}
 
-	public boolean isClientSide() {
+	public boolean isClientSide()
+	{
 		return getEntityWorld().isRemote;
 	}
 
+	@SideOnly(Side.CLIENT)
+	public boolean iamThePassenger(Entity passenger)
+	{
+		return Minecraft.getMinecraft().player == passenger;
+	}
+
 	@Override
-	public void onUpdate() {
+	public void onUpdate()
+	{
 		onGround = true;
 
 		World world = getEntityWorld();
@@ -133,7 +149,7 @@ public class Holder extends Entity {
 
 		if (isClientSide()) {
 			boolean decelerate = false;
-			if (passenger instanceof EntityPlayerSP) {
+			if (passenger instanceof EntityPlayerSP && iamThePassenger(passenger)) {
 				MovementInput input = ((EntityPlayerSP) passenger).movementInput;
 				if (input.jump)
 					decelerate = true;
@@ -167,7 +183,8 @@ public class Holder extends Entity {
 	}
 
 	@Override
-	public void updatePassenger(Entity passenger) {
+	public void updatePassenger(Entity passenger)
+	{
 		super.updatePassenger(passenger);
 		passenger.rotationYaw += deltaRotation;
 		passenger.setRotationYawHead(passenger.getRotationYawHead() + deltaRotation);
@@ -175,7 +192,8 @@ public class Holder extends Entity {
 	}
 
 	@Override
-	public void applyOrientationToEntity(Entity entity) {
+	public void applyOrientationToEntity(Entity entity)
+	{
 		entity.setRenderYawOffset(rotationYaw);
 		float delta = MathHelper.wrapDegrees(entity.rotationYaw - rotationYaw);
 		float clamped = MathHelper.clamp(delta, -MAX_DELTA_YAW, MAX_DELTA_YAW);
@@ -183,72 +201,87 @@ public class Holder extends Entity {
 	}
 
 	@Override
-	public boolean canBeCollidedWith() {
+	public boolean canBeCollidedWith()
+	{
 		return false;
 	}
 
 	@Override
-	public boolean canBePushed() {
+	public boolean canBePushed()
+	{
 		return false;
 	}
 
 	@Override
-	public boolean shouldRiderSit() {
+	public boolean shouldRiderSit()
+	{
 		return true;
 	}
 
 	@Override
-	protected void entityInit() {
+	protected void entityInit()
+	{
 	}
 
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound compound) {
+	protected void readEntityFromNBT(NBTTagCompound compound)
+	{
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	protected void writeEntityToNBT(NBTTagCompound compound) {
+	protected void writeEntityToNBT(NBTTagCompound compound)
+	{
 		// TODO Auto-generated method stub
 
 	}
 
-	public float getSpinRadius() {
+	public float getSpinRadius()
+	{
 		return dataManager.get(SPIN_RADIUS).floatValue();
 	}
 
-	public void setSpinRadius(float spinRadius) {
+	public void setSpinRadius(float spinRadius)
+	{
 		dataManager.set(SPIN_RADIUS, spinRadius);
 	}
 
-	public float getSpinVelocity() {
+	public float getSpinVelocity()
+	{
 		return dataManager.get(SPIN_VELOCITY).floatValue();
 	}
 
-	public void setSpinVelocity(float spinVelocity) {
+	public void setSpinVelocity(float spinVelocity)
+	{
 		dataManager.set(SPIN_VELOCITY, spinVelocity);
 	}
 
-	public float getSlideAcceleration() {
+	public float getSlideAcceleration()
+	{
 		return dataManager.get(SLIDE_ACCELERATION).floatValue();
 	}
 
-	public void setSlideAcceleration(float slideAcceleration) {
+	public void setSlideAcceleration(float slideAcceleration)
+	{
 		dataManager.set(SLIDE_ACCELERATION, slideAcceleration);
 	}
 
 	@Nullable
-	public BlockPos getPolePos() {
+	public BlockPos getPolePos()
+	{
 		return dataManager.get(POLE_POS).orNull();
 	}
 
-	public void setPolePos(@Nullable BlockPos pos) {
+	public void setPolePos(@Nullable BlockPos pos)
+	{
 		dataManager.set(POLE_POS, Optional.fromNullable(pos));
 	}
 
 	@Override
-	protected void addPassenger(Entity passenger) {
-		if (isClientSide() && switchToThirdPersonView && passenger instanceof EntityPlayer) {
+	protected void addPassenger(Entity passenger)
+	{
+		if (isClientSide() && switchToThirdPersonView && iamThePassenger(passenger)) {
 			GameSettings settings = Minecraft.getMinecraft().gameSettings;
 			savedThirdPersonView = settings.thirdPersonView;
 			if (settings.thirdPersonView == 0)
@@ -258,8 +291,9 @@ public class Holder extends Entity {
 	}
 
 	@Override
-	protected void removePassenger(Entity passenger) {
-		if (isClientSide() && switchToThirdPersonView && passenger instanceof EntityPlayer)
+	protected void removePassenger(Entity passenger)
+	{
+		if (isClientSide() && switchToThirdPersonView && iamThePassenger(passenger))
 			Minecraft.getMinecraft().gameSettings.thirdPersonView = savedThirdPersonView;
 		super.removePassenger(passenger);
 	}
@@ -272,19 +306,22 @@ public class Holder extends Entity {
 
 		@Override
 		@Nullable
-		protected ResourceLocation getEntityTexture(Holder entity) {
+		protected ResourceLocation getEntityTexture(Holder entity)
+		{
 			return null;
 		}
 
 		public static class Factory implements IRenderFactory<Holder> {
 			@Override
-			public Render<? super Holder> createRenderFor(RenderManager manager) {
+			public Render<? super Holder> createRenderFor(RenderManager manager)
+			{
 				return new Renderer(manager);
 			}
 		}
 
 		@Override
-		public void doRender(Holder entity, double x, double y, double z, float entityYaw, float partialTicks) {
+		public void doRender(Holder entity, double x, double y, double z, float entityYaw, float partialTicks)
+		{
 			super.doRender(entity, x, y, z, entityYaw, partialTicks);
 		}
 

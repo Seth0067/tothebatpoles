@@ -1,3 +1,6 @@
+## 1.1.0.1
+* fixed: third-person mode switching for players not using the pole
+
 ## 1.1.0.0
 * improved: sliding physics and control
 + added: ability to spin without sliding down

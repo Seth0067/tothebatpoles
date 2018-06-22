@@ -2,7 +2,7 @@
 {
   "modid": "tothebatpoles",
   "name": "To the Bat Poles!",
-  "description": "A mod for sliding down the poles.",
+  "description": "Sliding down those iron bars",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "https://github.com/Seth0067/tothebatpoles",
